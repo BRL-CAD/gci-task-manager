@@ -25,7 +25,9 @@ private function hrefify($url) {
 }
 
 public function beforeSave($options = array()) {
+    if(isset( $this->data['Task']['category'])){
     $this->data['Task']['category'] = implode(",",$this->data['Task']['category']);
+    }
     if(!(empty($this->data['Task']['background'])&&
         empty($this->data['Task']['action'])&&
         empty($this->data['Task']['references'])&&
@@ -37,8 +39,8 @@ public function beforeSave($options = array()) {
     $mod = $this->data['Task']['modify'];
     $back = "<p>" . implode( "</p>\n\n<p>", preg_split( '/\n(?:\s*\n)+/', $back ) ) . "</p>";
     $act = "<p>" . implode( "</p>\n\n<p>", preg_split( '/\n(?:\s*\n)+/', $act ) ) . "</p>";
-    if(strlen($ref)>3) {$ref = "<ul><li>" . implode( "</li>\n\n<li>", array_map($this->hrefify,preg_split( '/\n(?:\s*\n)+/', $ref ))) . "</ul></li>";} else {$ref = '';}
-    if(strlen($mod)>3) {$mod = "Code: <ul><li>" . implode( "</li>\n\n<li>", array_map($this->hrefify,preg_split( '/\n(?:\s*\n)+/', $mod ))) . "</ul></li>";} else {$mod = '';}
+    if(strlen($ref)>3) {$ref = "<ul><li>" . implode( "</li>\n\n<li>", array_filter(array_map($this->hrefify,explode( "\n", $ref )))) . "</ul></li>";} else {$ref = '';}
+    if(strlen($mod)>3) {$mod = "Code: <ul><li>" . implode( "</li>\n\n<li>", array_filter(array_map($this->hrefify,explode("\n", $mod )))) . "</ul></li>";} else {$mod = '';}
     $this->data['Task']['description'] = $back.$act.$ref.$mod;}
     return true;
 }
@@ -126,6 +128,22 @@ public function beforeSave($options = array()) {
 			),
 		),
 	);
+
+	public $hasAndBelongsToMany = array(
+                'Mentor' => array(
+                        'className' => 'Mentor',
+                        'joinTable' => 'mentors_tasks',
+                        'foreignKey' => 'task_id',
+                        'associationForeignKey' => 'mentor_id',
+                        'unique' => 'keepExisting',
+                        'conditions' => '',
+                        'fields' => '',
+                        'order' => '',
+                        'limit' => '',
+                        'offset' => '',
+                        'finderQuery' => '',
+                )
+        );
 }
 
 

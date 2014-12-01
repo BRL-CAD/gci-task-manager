@@ -23,14 +23,17 @@ class TasksController extends AppController {
     );
 	
 	public function export() {
-		$results = $this->Task->find('all',array('fields'=>array('id','title','description','tags','category','mentors','length','beginner')));
+		$results = $this->Task->find('all',array('fields'=>array('id','title','description','tags','category','length','beginner')));
 		foreach($results as $key => $value) {
 			$results[$key]['Task']['category'] = implode(", ",$value['Task']['category']);
 			if($value['Task']['beginner']){
 				$results[$key]['Task']['tags'] = "@beginner,".$value['Task']['tags'];
 			}
 			unset($results[$key]['Task']['beginner']);
-		}
+ 			$results[$key]['Task']['mentors'] = implode(',',array_map(function ($ment) {
+                    		return $ment['melange_name'];
+                    	},$value['Mentor']));		
+		} 
 		$extract = $this->CsvView->prepareExtractFromFindResults($results);
 		$headings = array(
 				'Task.id'=>'Sync Key',
@@ -53,7 +56,7 @@ class TasksController extends AppController {
  */
 	public function index() {
 		$this->Paginator->settings = $this->paginate;
-		$this->Task->recursive = 0;
+		$this->Task->recursive = 1;
 		$this->set('tasks', $this->Paginator->paginate());
 	}
 
@@ -80,6 +83,16 @@ class TasksController extends AppController {
 	public function add($id = null) {
 		if ($this->request->is(array('post', 'put'))) {
 			$this->Task->create();
+            $mentors = $this->Task->Mentor->find('list');
+            $mentors = array_keys($mentors);
+            $m1 = $mentors[rand(0,count($mentors)-1)];
+            $m2 = $mentors[rand(0,count($mentors)-1)];
+            while($m1 == $m2){
+               $m2 = $mentors[rand(0,count($mentors)-1)];
+            }
+            if(empty($this->request->data['Mentor']['Mentor']))
+            { $this->request->data['Mentor']['Mentor'] = array($m1,$m2); }
+             
 			if ($this->Task->save($this->request->data)) {
 				$this->Session->setFlash(__('The task has been saved.'));
 				return $this->redirect(array('action' => 'index'));
@@ -100,7 +113,8 @@ class TasksController extends AppController {
 			$this->request->data['Task']['parent']=$this->request->data['Task']['id'];
 			$this->request->data['Task']['title']=$this->request->data['Task']['title'].' #'.(1+$this->request->data['Task']['copies']);
 		}
-		
+$mentors = $this->Task->Mentor->find('list');
+                $this->set(compact('mentors'));		
 	}
 /**
  * edit method
@@ -114,9 +128,10 @@ class TasksController extends AppController {
 			throw new NotFoundException(__('Invalid task'));
 		}
 		if ($this->request->is(array('post', 'put'))) {
+			$this->Task->validator()->remove('action');
 			if ($this->Task->save($this->request->data)) {
 				$this->Session->setFlash(__('The task has been saved.'));
-				return $this->redirect(array('action' => 'index'));
+//				return $this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The task could not be saved. Please, try again.'));
 			}
@@ -124,6 +139,18 @@ class TasksController extends AppController {
 			$options = array('conditions' => array('Task.' . $this->Task->primaryKey => $id));
 			$this->request->data = $this->Task->find('first', $options);
 		}
+		$tasks = array_keys($this->Task->find('list'));
+		$loc = array_search($id,$tasks);
+		if(isset($tasks[$loc+1])){
+            $this->set('nexttask',$tasks[$loc+1]);
+		}
+        if(isset($tasks[$loc-1])){
+            $this->set('prevtask', $tasks[$loc-1]);
+        }
+
+$mentors = $this->Task->Mentor->find('list');
+                $this->set(compact('mentors'));
+
 	}
 	
 	public function replicate($id = null, $count = 0) {
@@ -135,12 +162,15 @@ class TasksController extends AppController {
 			if(isset($task['Task']['parent'])){
 				$task = $this->Task->find('first',array('conditions'=>array('id'=> $task['Task']['parent'])));
 			}
+			unset($task['Task']['modified']);
+			unset($task['Task']['created']);
 			for($i = 1; $i <= $count; $i++){
 				unset($this->Task->id);
 				$newTask = $task;
 				unset($newTask['Task']['id']);
 				$newTask['Task']['parent']=$task['Task']['id'];
 				$newTask['Task']['title']=$task['Task']['title'].' #'.($i+$task['Task']['copies']);
+				$this->Task->validator()->remove('action');
 				$this->Task->save($newTask);
 			}
 			$task['Task']['copies'] += $count;

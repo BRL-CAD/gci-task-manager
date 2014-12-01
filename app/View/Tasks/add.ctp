@@ -22,7 +22,7 @@
                      echo $this->Form->input('description');
                 }
                 echo $this->Form->input('length', array('label'=>'Length (Hours)'));
-                echo $this->Form->input('mentors');	?>
+                echo $this->Form->input('Mentor');	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
 </div>

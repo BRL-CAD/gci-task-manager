@@ -21,7 +21,9 @@
                 <td><?php echo h(implode(", ",$task['Task']['category'])); ?>&nbsp;</td>   
                 <td><?php echo $task['Task']['beginner']?'Yes':'No'; ?>&nbsp;</td>
                 <td><?php echo h($task['Task']['length']); ?>&nbsp;</td>
-				<td><?php echo h($task['Task']['mentors']); ?>&nbsp;</td>
+				<td><?php echo h(implode(',',array_map(function ($ment) {
+				    return $ment['melange_name'];
+				    },$task['Mentor']))); ?>&nbsp;</td>
                 <td class="actions">
                     <?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $task['Task']['id']), array(), __('Are you sure you want to delete # %s?', $task['Task']['id'])); ?>
 					<?php echo $this->Html->link(__('Copy'), array(), array('class'=>'copy' ,'data-id'=>$task['Task']['id'])); ?> 
