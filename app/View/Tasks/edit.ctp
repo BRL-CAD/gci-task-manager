@@ -37,18 +37,25 @@
 <?php echo $this->Form->end(__('Submit')); ?>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
+	<h3><?php 
+	$taskseqbtnstyle = $this->Html->style(array(
+        'display' => 'inline-block',
+        'clear' => 'none',
+    ));
+	echo __('Actions'); ?></h3>
 	<ul>
 
 		<li><?php echo $this->Html->link(__('List Tasks'), array('action' => 'index')); ?></li>
 		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('Task.id')), array(), __('Are you sure you want to delete # %s?', $this->Form->value('Task.id'))); ?></li>
                 <br>
-                
-                <?php if(isset($prevtask)): ?><li>
-                    <?php echo $this->Html->link(__('Previous Task'), array('action' => 'edit', $prevtask)); ?>
-		</li><?php endif; ?>
-                <?php if(isset($nexttask)): ?><li>
-                    <?php echo $this->Html->link(__('Next Task'), array('action' => 'edit', $nexttask)); ?>
-		</li><?php endif; ?>
-	</ul>
+                <li>
+                <?php if(isset($prevtask)){
+                    echo $this->Html->link(__('Prev Task'), array('action' => 'edit', $prevtask),array('style'=>$taskseqbtnstyle . "float: left;"));
+                }?>
+                <?php if(isset($nexttask)){
+                    echo $this->Html->link(__('Next Task'), array('action' => 'edit', $nexttask),array('style'=>$taskseqbtnstyle . "float: right;"));
+                }?>
+                </li>
+    </ul>
 </div>
+

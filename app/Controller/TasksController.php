@@ -170,6 +170,16 @@ $mentors = $this->Task->Mentor->find('list');
 				unset($newTask['Task']['id']);
 				$newTask['Task']['parent']=$task['Task']['id'];
 				$newTask['Task']['title']=$task['Task']['title'].' #'.($i+$task['Task']['copies']);
+				unset($newTask['Mentor']);
+				$mentors = $this->Task->Mentor->find('list');
+                $mentors = array_keys($mentors);
+                $m1 = $mentors[rand(0,count($mentors)-1)];
+                $m2 = $mentors[rand(0,count($mentors)-1)];
+                while($m1 == $m2){
+                    $m2 = $mentors[rand(0,count($mentors)-1)];
+                }
+                if(empty($newTask['Mentor']['Mentor'])) {
+                $newTask['Mentor']['Mentor'] = array($m1,$m2); }
 				$this->Task->validator()->remove('action');
 				$this->Task->save($newTask);
 			}
