@@ -35,11 +35,11 @@
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
 		<li>
+			<?php echo $this->Html->link(__('List Tasks'), array('action' => 'index')); ?></li>
+		<li>
 			<?php echo $this->Html->link(__('Edit Task'), array('action' => 'edit', $task['Task']['id'])); ?></li>
 		<li>
 			<?php echo $this->Form->postLink(__('Delete Task'), array('action' => 'delete', $task['Task']['id']), array(), __('Are you sure you want to delete # %s?', $task['Task']['id'])); ?></li>
-		<li>
-			<?php echo $this->Html->link(__('List Tasks'), array('action' => 'index')); ?></li>
 		<li>
 			<?php echo $this->Html->link(__('New Task'), array('action' => 'add')); ?></li>
 	</ul>
