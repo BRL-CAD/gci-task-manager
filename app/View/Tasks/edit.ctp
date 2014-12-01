@@ -42,14 +42,12 @@
 
 		<li><?php echo $this->Html->link(__('List Tasks'), array('action' => 'index')); ?></li>
 		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('Task.id')), array(), __('Are you sure you want to delete # %s?', $this->Form->value('Task.id'))); ?></li>
-                <br/>
-                <?php if(isset($prevtask)): ?>
-                <li><?php echo $this->Html->link(__('Previous Task'), array('action' => 'edit', $prevtask)); ?></li>
-                <?php endif; ?>
+                <br>
+                
+                <li>
+                <?php if(isset($prevtask)): ?><?php echo $this->Html->link(__('Previous Task'), array('action' => 'edit', $prevtask)); ?><?php endif; ?>
+                <?php if(isset($nexttask)): ?><?php echo $this->Html->link(__('Next Task'), array('action' => 'edit', $nexttask)); ?><?php endif; ?>
+                </li>
 
-                <?php if(isset($nexttask)): ?>
-                <li><?php echo $this->Html->link(__('Next Task'), array('action' => 'edit', $nexttask)); ?></li>
-                <?php endif; ?>
-                  
 	</ul>
 </div>
