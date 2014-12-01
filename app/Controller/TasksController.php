@@ -23,7 +23,7 @@ class TasksController extends AppController {
     );
 	
 	public function export() {
-		$results = $this->Task->find('all',array('fields'=>array('id','title','description','tags','category','length','beginner')));
+		$results = $this->Task->find('all',array('contain'=> array('Mentor' => array('fields' => array('melange_user'))),  'fields'=>array('id','title','description','tags','category','length','beginner')));
 		foreach($results as $key => $value) {
 			$results[$key]['Task']['category'] = implode(", ",$value['Task']['category']);
 			if($value['Task']['beginner']){
@@ -31,7 +31,7 @@ class TasksController extends AppController {
 			}
 			unset($results[$key]['Task']['beginner']);
  			$results[$key]['Task']['mentors'] = implode(',',array_map(function ($ment) {
-                    		return $ment['melange_name'];
+                    		return $ment['melange_user'];
                     	},$value['Mentor']));		
 		} 
 		$extract = $this->CsvView->prepareExtractFromFindResults($results);

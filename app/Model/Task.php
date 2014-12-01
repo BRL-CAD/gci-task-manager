@@ -5,6 +5,7 @@ App::uses('AppModel', 'Model');
  *
  */
 class Task extends AppModel {
+ public $actsAs = array('Containable');
 	
 public function afterFind($results, $primary = false) {
     foreach ($results as $key => $val) {
