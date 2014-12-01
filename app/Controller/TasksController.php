@@ -84,14 +84,8 @@ class TasksController extends AppController {
 		if ($this->request->is(array('post', 'put'))) {
 			$this->Task->create();
             $mentors = $this->Task->Mentor->find('list');
-            $mentors = array_keys($mentors);
-            $m1 = $mentors[rand(0,count($mentors)-1)];
-            $m2 = $mentors[rand(0,count($mentors)-1)];
-            while($m1 == $m2){
-               $m2 = $mentors[rand(0,count($mentors)-1)];
-            }
             if(empty($this->request->data['Mentor']['Mentor']))
-            { $this->request->data['Mentor']['Mentor'] = array($m1,$m2); }
+            { $this->request->data['Mentor']['Mentor'] = array_rand($mentors,2); }
              
 			if ($this->Task->save($this->request->data)) {
 				$this->Session->setFlash(__('The task has been saved.'));
@@ -172,14 +166,8 @@ $mentors = $this->Task->Mentor->find('list');
 				$newTask['Task']['title']=$task['Task']['title'].' #'.($i+$task['Task']['copies']);
 				unset($newTask['Mentor']);
 				$mentors = $this->Task->Mentor->find('list');
-                $mentors = array_keys($mentors);
-                $m1 = $mentors[rand(0,count($mentors)-1)];
-                $m2 = $mentors[rand(0,count($mentors)-1)];
-                while($m1 == $m2){
-                    $m2 = $mentors[rand(0,count($mentors)-1)];
-                }
                 if(empty($newTask['Mentor']['Mentor'])) {
-                $newTask['Mentor']['Mentor'] = array($m1,$m2); }
+                $newTask['Mentor']['Mentor'] = array_rand($mentors,2); }
 				$this->Task->validator()->remove('action');
 				$this->Task->save($newTask);
 			}
