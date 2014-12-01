@@ -40,8 +40,8 @@ public function beforeSave($options = array()) {
     $mod = $this->data['Task']['modify'];
     $back = "<p>" . implode( "</p>\n\n<p>", preg_split( '/\n(?:\s*\n)+/', $back ) ) . "</p>";
     $act = "<p>" . implode( "</p>\n\n<p>", preg_split( '/\n(?:\s*\n)+/', $act ) ) . "</p>";
-    if(strlen($ref)>3) {$ref = "<ul><li>" . implode( "</li>\n\n<li>", array_filter(array_map($this->hrefify,explode( "\n", $ref )))) . "</ul></li>";} else {$ref = '';}
-    if(strlen($mod)>3) {$mod = "Code: <ul><li>" . implode( "</li>\n\n<li>", array_filter(array_map($this->hrefify,explode("\n", $mod )))) . "</ul></li>";} else {$mod = '';}
+    if(strlen($ref)>3) {$ref = "References: <ul><li>" . implode( "</li>\n\n<li>", array_filter(array_map($this->hrefify,explode( "\n", $ref )))) . "</ul></li>";} else {$ref = '';}
+    if(strlen($mod)>3) {$mod = "<br/>Modify: <ul><li>" . implode( "</li>\n\n<li>", array_filter(array_map($this->hrefify,explode("\n", $mod )))) . "</ul></li>";} else {$mod = '';}
     $this->data['Task']['description'] = $back.$act.$ref.$mod;}
     return true;
 }

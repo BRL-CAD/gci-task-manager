@@ -11,4 +11,11 @@ class TaskShell extends AppShell {
             $this->out(print_r($this->Task->save($taskSv), true));	
         }
     }
+    
+    public function force_reparse() {
+        $tasks = $this->Task->find('all');
+        foreach($tasks as $task) {
+            $this->out(print_r($this->Task->save($task), true));
+        }
+    }
 }
